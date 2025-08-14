@@ -99,25 +99,74 @@
         <p>The proxy of the future</p>
         <div class="input-group">
             <input type="text" id="urlInput" placeholder="https://example.com" value="https://">
-            <button onclick="generateProxyUrl()">Go!</button>
+            <button onclick="loadInIframe()">Go!</button>
         </div>
     </div>
 
+    <div id="iframe-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="display: flex; flex-direction: column; height: 100%; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.2);">
+            <div id="iframe-controls" style="display: flex; padding: 10px; background-color: #f0f4f8; border-bottom: 1px solid #cbd5e1; align-items: center; gap: 10px;">
+                <input type="text" id="iframeUrlBar" style="flex-grow: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="Enter URL">
+                <button onclick="updateIframeSource()">Go</button>
+                <button onclick="hideIframe()">Hide</button>
+            </div>
+            <iframe id="proxyFrame" style="flex-grow: 1; border: none;"></iframe>
+        </div>
+    </div>
+
+
     <script>
-        function generateProxyUrl() {
-            const urlInput = document.getElementById('urlInput').value;
-            if (urlInput) {
-                // Encode the URL in Base64
-                const encodedUrl = btoa(urlInput);
-                // Get the base URL of the worker from the current window location
+        const urlInput = document.getElementById('urlInput');
+        const iframeContainer = document.getElementById('iframe-container');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const iframeUrlBar = document.getElementById('iframeUrlBar');
+
+        function generateProxyUrl(url) {
+            if (url) {
+                const encodedUrl = btoa(url);
                 const baseUrl = window.location.origin;
-                // Construct the full proxy URL with the /assignment/ path prefix
-                const proxyUrl = `${baseUrl}/assignment/${encodedUrl}`;
-                
-                const linkDiv = document.getElementById('proxyLink');
-                window.open(proxyUrl, '_blank'); // Open the proxied URL in a new tab
+                return `${baseUrl}/assignment/${encodedUrl}`;
+            }
+            return '';
+        }
+
+        function loadInIframe() {
+            const url = urlInput.value;
+            if (url && url !== 'https://') {
+                const proxyUrl = generateProxyUrl(url);
+                proxyFrame.src = proxyUrl;
+                iframeUrlBar.value = url;
+                iframeContainer.style.display = 'block';
             }
         }
+
+        function updateIframeSource() {
+            const url = iframeUrlBar.value;
+            if (url) {
+                const proxyUrl = generateProxyUrl(url);
+                proxyFrame.src = proxyUrl;
+            }
+        }
+
+        function hideIframe() {
+            iframeContainer.style.display = 'none';
+            proxyFrame.src = 'about:blank'; // Clear iframe content to free up resources
+        }
+
+        // Add event listener for Enter key on both input fields
+        urlInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                loadInIframe();
+            }
+        });
+
+        iframeUrlBar.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                updateIframeSource();
+            }
+        });
     </script>
 
 </body>
