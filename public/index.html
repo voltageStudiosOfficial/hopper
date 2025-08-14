@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopper Proxy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+            color: #334155;
+            padding: 1rem;
+        }
+        .container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #4b5563;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        input[type="text"] {
+            padding: 10px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.2s ease-in-out;
+            box-sizing: border-box; /* To include padding and border in the element's total width and height */
+        }
+        input[type="text"]:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        #proxyLink {
+            margin-top: 1rem;
+        }
+        #proxyLink a {
+            color: #1e3a8a;
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        #proxyLink a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to Hopper</h1>
+        <p>The proxy of the future</p>
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="https://example.com" value="https://">
+            <button onclick="generateProxyUrl()">Go!</button>
+        </div>
+    </div>
+
+    <script>
+        function generateProxyUrl() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (urlInput) {
+                // Encode the URL in Base64
+                const encodedUrl = btoa(urlInput);
+                // Get the base URL of the worker from the current window location
+                const baseUrl = window.location.origin;
+                // Construct the full proxy URL with the /assignment/ path prefix
+                const proxyUrl = `${baseUrl}/assignment/${encodedUrl}`;
+                
+                const linkDiv = document.getElementById('proxyLink');
+                window.open(proxyUrl, '_blank'); // Open the proxied URL in a new tab
+            }
+        }
+    </script>
+
+</body>
+</html>
