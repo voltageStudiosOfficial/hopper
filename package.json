@@ -9,5 +9,8 @@
 	},
 	"devDependencies": {
 		"wrangler": "^4.29.1"
+	},
+	"dependencies": {
+		"ngrok": "^5.0.0-beta.2"
 	}
 }
