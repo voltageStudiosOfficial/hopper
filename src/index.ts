@@ -165,7 +165,12 @@ export default {
             // If the path does not start with '/assignment/', let Cloudflare Pages handle it.
             // This is the key difference from the Worker-only version.
             // The return value here is a special signal that Pages should continue.
-            return env.ASSETS.fetch(request);
+            if (env.ASSETS) {
+                return env.ASSETS.fetch(request);
+            } else {
+                // In local development, ASSETS might not be available, so return a passthrough
+                return fetch(request);
+            }
         }
     }
 };
