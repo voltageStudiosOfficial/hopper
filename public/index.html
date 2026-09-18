@@ -3,171 +3,659 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
     <title>Hopper Proxy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            color-scheme: dark;
+            --bg: #07111f;
+            --surface: rgba(16, 31, 49, 0.84);
+            --surface-strong: #102033;
+            --surface-soft: #172a40;
+            --line: rgba(148, 163, 184, 0.16);
+            --line-strong: rgba(148, 163, 184, 0.28);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #4ade80;
+            --accent-strong: #22c55e;
+            --accent-soft: rgba(74, 222, 128, 0.12);
+            --danger: #fb7185;
+            font-family: "Inter", system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            background-color: #f0f4f8;
-            color: #334155;
-            padding: 1rem;
+            margin: 0;
+            overflow: hidden;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 20% 10%, rgba(34, 197, 94, 0.12), transparent 30rem),
+                radial-gradient(circle at 90% 90%, rgba(14, 165, 233, 0.1), transparent 32rem),
+                var(--bg);
         }
-        .container {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
+
+        button,
+        input {
+            font: inherit;
         }
-        h1 {
-            color: #1e3a8a;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        p {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            color: #4b5563;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        input[type="text"] {
-            padding: 10px 15px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 1rem;
-            width: 100%;
-            transition: all 0.2s ease-in-out;
-            box-sizing: border-box; /* To include padding and border in the element's total width and height */
-        }
-        input[type="text"]:focus {
-            border-color: #3b82f6;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-        }
+
         button {
-            padding: 12px 24px;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            width: 100%;
+            color: inherit;
         }
-        button:hover {
-            background-color: #2563eb;
+
+        .landing {
+            position: relative;
+            display: grid;
+            min-height: 100vh;
+            place-items: center;
+            padding: 2rem;
+        }
+
+        .landing::before {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            content: "";
+            opacity: 0.28;
+            background-image:
+                linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
+        }
+
+        .landing-card {
+            position: relative;
+            width: min(720px, 100%);
+            padding: clamp(1.5rem, 5vw, 3.5rem);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background: linear-gradient(145deg, rgba(17, 35, 54, 0.92), rgba(10, 24, 39, 0.82));
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 13px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: inset 0 0 18px rgba(74, 222, 128, 0.08);
+        }
+
+        .brand-mark svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 4rem 0 1rem;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+            content: "";
+        }
+
+        h1 {
+            max-width: 590px;
+            margin: 0;
+            font-size: clamp(2.4rem, 7vw, 4.75rem);
+            line-height: 0.98;
+            letter-spacing: -0.065em;
+        }
+
+        .intro {
+            max-width: 520px;
+            margin: 1.35rem 0 2rem;
+            color: var(--muted);
+            font-size: clamp(1rem, 2vw, 1.12rem);
+            line-height: 1.7;
+        }
+
+        .launch-form {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.6rem;
+            border: 1px solid var(--line-strong);
+            border-radius: 18px;
+            background: rgba(5, 14, 25, 0.72);
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        .launch-form:focus-within {
+            border-color: rgba(74, 222, 128, 0.62);
+            box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.08);
+        }
+
+        .launch-form svg {
+            align-self: center;
+            flex: 0 0 auto;
+            width: 20px;
+            margin-left: 0.5rem;
+            color: var(--muted);
+        }
+
+        .launch-form input {
+            min-width: 0;
+            flex: 1;
+            border: 0;
+            outline: 0;
+            color: var(--text);
+            background: transparent;
+        }
+
+        .launch-form input::placeholder {
+            color: #64748b;
+        }
+
+        .launch-form button,
+        .go-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            border: 0;
+            border-radius: 12px;
+            color: #052e16;
+            background: var(--accent);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        .launch-form button {
+            min-height: 46px;
+            padding: 0 1.2rem;
+        }
+
+        .launch-form button:hover,
+        .go-button:hover {
+            background: #86efac;
             transform: translateY(-1px);
         }
-        button:active {
-            transform: translateY(1px);
+
+        .launch-form button svg {
+            width: 17px;
+            margin: 0;
+            color: currentColor;
         }
-        #proxyLink {
-            margin-top: 1rem;
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem 1.2rem;
+            margin-top: 1.25rem;
+            color: #718096;
+            font-size: 0.76rem;
         }
-        #proxyLink a {
-            color: #1e3a8a;
-            text-decoration: none;
-            font-weight: 600;
-            word-break: break-all;
+
+        .meta-row span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
-        #proxyLink a:hover {
-            text-decoration: underline;
+
+        .meta-row svg {
+            width: 14px;
+            color: var(--accent);
+        }
+
+        .browser-shell {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            visibility: hidden;
+            opacity: 0;
+            background: #07111f;
+            transform: scale(1.015);
+            transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+        }
+
+        .browser-shell.is-open {
+            visibility: visible;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .browser-hud {
+            position: relative;
+            z-index: 2;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(7, 17, 31, 0.96);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            backdrop-filter: blur(18px);
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .icon-button {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+        }
+
+        .icon-button:hover {
+            border-color: var(--line);
+            background: var(--surface-soft);
+        }
+
+        .icon-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .address-bar {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            align-items: center;
+            gap: 0.65rem;
+            height: 42px;
+            padding: 0 0.45rem 0 0.8rem;
+            border: 1px solid var(--line-strong);
+            border-radius: 12px;
+            background: var(--surface);
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+        }
+
+        .address-bar:focus-within {
+            border-color: rgba(74, 222, 128, 0.55);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.08);
+        }
+
+        .connection-indicator {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .connection-indicator::before {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            content: "";
+        }
+
+        .address-bar input {
+            min-width: 0;
+            height: 100%;
+            flex: 1;
+            border: 0;
+            outline: 0;
+            color: var(--text);
+            background: transparent;
+            font-size: 0.88rem;
+        }
+
+        .go-button {
+            width: 32px;
+            height: 32px;
+            flex: 0 0 auto;
+        }
+
+        .go-button svg {
+            width: 16px;
+        }
+
+        .exit-button {
+            color: var(--muted);
+        }
+
+        .exit-button:hover {
+            color: var(--danger);
+            background: rgba(251, 113, 133, 0.1);
+        }
+
+        .load-track {
+            position: absolute;
+            right: 0;
+            bottom: -1px;
+            left: 0;
+            height: 2px;
+            overflow: hidden;
+        }
+
+        .load-track::after {
+            display: block;
+            width: 38%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            content: "";
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .browser-shell.is-loading .load-track::after {
+            opacity: 1;
+            animation: loading 1s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            to { transform: translateX(360%); }
+        }
+
+        .viewport {
+            position: relative;
+            min-height: 0;
+            background: white;
+        }
+
+        #proxyFrame {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: white;
+        }
+
+        .frame-empty {
+            position: absolute;
+            inset: 0;
+            display: none;
+            place-items: center;
+            color: #64748b;
+            background: #f8fafc;
+        }
+
+        .frame-empty.is-visible {
+            display: grid;
+        }
+
+        @media (max-width: 720px) {
+            .landing {
+                align-items: start;
+                padding: 1rem;
+            }
+
+            .landing-card {
+                margin-top: 5vh;
+                padding: 1.5rem;
+                border-radius: 22px;
+            }
+
+            .eyebrow {
+                margin-top: 3rem;
+            }
+
+            .launch-form {
+                display: grid;
+                grid-template-columns: auto 1fr;
+            }
+
+            .launch-form button {
+                grid-column: 1 / -1;
+            }
+
+            .browser-hud {
+                padding: 0.6rem;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+
+            .nav-group {
+                order: 2;
+            }
+
+            .address-bar {
+                order: 1;
+                width: calc(100% - 46px);
+                flex-basis: calc(100% - 46px);
+            }
+
+            .exit-button {
+                order: 1;
+            }
+
+            .connection-indicator span {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Welcome to Hopper</h1>
-        <p>The proxy of the future</p>
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="https://example.com" value="https://">
-            <button onclick="loadInIframe()">Go!</button>
-        </div>
-    </div>
-
-    <div id="iframe-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
-        <div style="display: flex; flex-direction: column; height: 100%; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.2);">
-            <div id="iframe-controls" style="display: flex; padding: 10px; background-color: #f0f4f8; border-bottom: 1px solid #cbd5e1; align-items: center; gap: 10px;">
-                <input type="text" id="iframeUrlBar" style="flex-grow: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="Enter URL">
-                <button onclick="updateIframeSource()">Go</button>
-                <button onclick="hideIframe()">Hide</button>
+    <main class="landing" id="landing">
+        <section class="landing-card" aria-labelledby="page-title">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 7h11a4 4 0 0 1 0 8H8" />
+                        <path d="m11 11-4 4 4 4" />
+                    </svg>
+                </span>
+                Hopper
             </div>
-            <iframe id="proxyFrame" style="flex-grow: 1; border: none;"></iframe>
-        </div>
-    </div>
 
+            <div class="eyebrow">Proxy online</div>
+            <h1 id="page-title">The open web, one hop away.</h1>
+            <p class="intro">Enter a destination to launch a focused browsing workspace powered by Hopper's edge proxy.</p>
+
+            <form class="launch-form" id="launchForm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" />
+                </svg>
+                <input type="text" id="urlInput" inputmode="url" autocomplete="url" spellcheck="false" placeholder="Enter a URL, like example.com" aria-label="Destination URL">
+                <button type="submit">
+                    Launch
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </button>
+            </form>
+
+            <div class="meta-row" aria-label="Proxy features">
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" /></svg>
+                    Cookies stripped
+                </span>
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" /></svg>
+                    Edge powered
+                </span>
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+                    CORS ready
+                </span>
+            </div>
+        </section>
+    </main>
+
+    <section class="browser-shell" id="browserShell" aria-label="Hopper browser">
+        <header class="browser-hud">
+            <div class="toolbar">
+                <div class="nav-group" aria-label="Navigation controls">
+                    <button class="icon-button" id="backButton" type="button" title="Back" aria-label="Go back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                    </button>
+                    <button class="icon-button" id="forwardButton" type="button" title="Forward" aria-label="Go forward">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    </button>
+                    <button class="icon-button" id="reloadButton" type="button" title="Reload" aria-label="Reload page">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v6h-6" /><path d="M20 12a8 8 0 1 0-2.34 5.66L20 16" /></svg>
+                    </button>
+                    <button class="icon-button" id="homeButton" type="button" title="Hopper home" aria-label="Return to Hopper home">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></svg>
+                    </button>
+                </div>
+
+                <form class="address-bar" id="addressForm">
+                    <div class="connection-indicator" title="Traffic is routed through Hopper"><span>Proxied</span></div>
+                    <input type="text" id="iframeUrlBar" inputmode="url" autocomplete="url" spellcheck="false" aria-label="Current URL">
+                    <button class="go-button" type="submit" title="Go" aria-label="Go to URL">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </button>
+                </form>
+
+                <button class="icon-button exit-button" id="exitButton" type="button" title="Exit proxy" aria-label="Exit proxy">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="load-track" aria-hidden="true"></div>
+        </header>
+
+        <div class="viewport">
+            <iframe id="proxyFrame" title="Proxied website"></iframe>
+            <div class="frame-empty" id="frameEmpty">Enter a destination above to start browsing.</div>
+        </div>
+    </section>
 
     <script>
+        const landing = document.getElementById('landing');
+        const launchForm = document.getElementById('launchForm');
         const urlInput = document.getElementById('urlInput');
-        const iframeContainer = document.getElementById('iframe-container');
-        const proxyFrame = document.getElementById('proxyFrame');
+        const browserShell = document.getElementById('browserShell');
+        const addressForm = document.getElementById('addressForm');
         const iframeUrlBar = document.getElementById('iframeUrlBar');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const frameEmpty = document.getElementById('frameEmpty');
+
+        function normalizeUrl(value) {
+            const trimmed = value.trim();
+            if (!trimmed) return '';
+            return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+        }
 
         function generateProxyUrl(url) {
-            if (url) {
-                const encodedUrl = btoa(url);
-                const baseUrl = window.location.origin;
-                return `${baseUrl}/assignment/${encodedUrl}`;
-            }
-            return '';
+            return `${window.location.origin}/assignment/${btoa(url)}`;
         }
 
-        function loadInIframe() {
-            const url = urlInput.value;
-            if (url && url !== 'https://') {
-                const proxyUrl = generateProxyUrl(url);
-                proxyFrame.src = proxyUrl;
-                iframeUrlBar.value = url;
-                iframeContainer.style.display = 'block';
+        function navigateTo(value) {
+            const url = normalizeUrl(value);
+            if (!url) return;
+
+            iframeUrlBar.value = url;
+            frameEmpty.classList.remove('is-visible');
+            browserShell.classList.add('is-loading');
+            proxyFrame.src = generateProxyUrl(url);
+        }
+
+        function openBrowser(value) {
+            const url = normalizeUrl(value);
+            if (!url) {
+                urlInput.focus();
+                return;
+            }
+
+            landing.setAttribute('aria-hidden', 'true');
+            browserShell.classList.add('is-open');
+            navigateTo(url);
+        }
+
+        function closeBrowser() {
+            browserShell.classList.remove('is-open', 'is-loading');
+            landing.removeAttribute('aria-hidden');
+            urlInput.value = iframeUrlBar.value;
+            proxyFrame.src = 'about:blank';
+            window.setTimeout(() => urlInput.focus(), 180);
+        }
+
+        function useFrameHistory(direction) {
+            try {
+                proxyFrame.contentWindow.history[direction]();
+            } catch {
+                // Some destinations restrict frame history access.
             }
         }
 
-        function updateIframeSource() {
-            const url = iframeUrlBar.value;
-            if (url) {
-                const proxyUrl = generateProxyUrl(url);
-                proxyFrame.src = proxyUrl;
-            }
-        }
-
-        function hideIframe() {
-            iframeContainer.style.display = 'none';
-            proxyFrame.src = 'about:blank'; // Clear iframe content to free up resources
-        }
-
-        // Add event listener for Enter key on both input fields
-        urlInput.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                loadInIframe();
-            }
+        launchForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            openBrowser(urlInput.value);
         });
 
-        iframeUrlBar.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
+        addressForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            navigateTo(iframeUrlBar.value);
+        });
+
+        document.getElementById('backButton').addEventListener('click', () => useFrameHistory('back'));
+        document.getElementById('forwardButton').addEventListener('click', () => useFrameHistory('forward'));
+        document.getElementById('reloadButton').addEventListener('click', () => {
+            browserShell.classList.add('is-loading');
+            try {
+                proxyFrame.contentWindow.location.reload();
+            } catch {
+                navigateTo(iframeUrlBar.value);
+            }
+        });
+        document.getElementById('homeButton').addEventListener('click', closeBrowser);
+        document.getElementById('exitButton').addEventListener('click', closeBrowser);
+
+        proxyFrame.addEventListener('load', () => {
+            browserShell.classList.remove('is-loading');
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && browserShell.classList.contains('is-open')) {
+                closeBrowser();
+            }
+
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'l' && browserShell.classList.contains('is-open')) {
                 event.preventDefault();
-                updateIframeSource();
+                iframeUrlBar.focus();
+                iframeUrlBar.select();
             }
         });
     </script>
-
 </body>
 </html>
